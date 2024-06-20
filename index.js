@@ -43,12 +43,17 @@ app.get("/api/todo/getAllTodoTasks", async (req, res) => {
   console.log(allTodos);
   res.send(allTodos);
 });
+app.get("/api/todo/getTodoTask", async (req, res) => {
+  const todo = await Todo.findOne(req.body.todoId);
+  console.log(todo);
+  res.send(todo);
+});
 
-app.get("/api/todo/getIndividualTodoTasks", async (req, res) => {
+app.get("/api/todo/getIndividualUserTodoTasks", async (req, res) => {
   const userId = req.query.userId;
   console.log(userId);
   const user = await User.findById(userId).populate("todos");
-  //Find from Todos or from the user's todos field?
+  //Find from Todo collection or from the user's todos field?
 
   res.send(user.todos);
 });
