@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const mongoose = require("mongoose");
 var bodyParser = require("body-parser");
+const { type } = require("os");
 
 const app = express();
 app.use(bodyParser.json());
@@ -17,16 +18,16 @@ mongoose
   });
 
 const TodoSchema = new mongoose.Schema({
-  title: String,
-  description: String,
-  isComplete: Boolean,
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // OneToMany
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  isComplete: { type: Boolean, default: false },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // OneToMany
 });
 
 const UserSchema = new mongoose.Schema({
-  name: String,
-  username: String,
-  password: String, //hashed
+  name: { type: String, required: true },
+  username: { type: String, required: true, unique: true },
+  password: { type: String, required: true }, //hashed
   todos: [{ type: mongoose.Schema.Types.ObjectId, ref: "Todo" }], // ManyToOne
 });
 
@@ -37,17 +38,31 @@ app.get("/", (req, res) => {
   res.send("GÜNSEL To-Do App");
 });
 
+app.get("/api/todo/getAllTodoTasks", async (req, res) => {
+  const allTodos = await Todo.find();
+  console.log(allTodos);
+  res.send(allTodos);
+});
+
+app.get("/api/todo/getIndividualTodoTasks", async (req, res) => {
+  const userId = req.query.userId;
+  console.log(userId);
+  const user = await User.findById(userId).populate("todos");
+  //Find from Todos or from the user's todos field?
+
+  res.send(user.todos);
+});
+
 app.post("/api/user/create", async (req, res) => {
   try {
     const userData = req.body;
     console.log(userData);
     const user = User(userData);
-    user.save();
+    await user.save();
     res.status(200).json({ message: "User Created Successfully." });
   } catch (error) {
-    s;
     console.log(error);
-    res.status(400).json({ message: "something went wrong." });
+    res.status(400).json({ message: "Something went wrong." });
   }
 });
 
@@ -57,12 +72,16 @@ app.post("/api/todo/create", async (req, res) => {
     const todoData = req.body;
     console.log(todoData);
     const todo = Todo(todoData);
-    todo.save();
-    res.status(200).json({ message: "User Created Successfully." });
+    await todo.save();
+
+    const user = await User.findById(todo.userId);
+    user.todos.push(todo);
+    user.save();
+
+    res.status(200).json({ message: "Todo Created Successfully." });
   } catch (error) {
-    s;
     console.log(error);
-    res.status(400).json({ message: "something went wrong." });
+    res.status(400).json({ message: "Something went wrong." });
   }
 });
 
