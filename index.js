@@ -89,6 +89,20 @@ app.post("/api/todo/create", async (req, res) => {
     res.status(400).json({ message: "Something went wrong." });
   }
 });
+app.post("/api/todo/toggleTaskComplete", async (req, res) => {
+  // TODO: Implement Validation
+  try {
+    const todoId = req.query.todoId;
+    const todo = await Todo.findById(todoId);
+    todo.isComplete = !todo.isComplete;
+    await todo.save();
+
+    res.status(200).json({ isComplete: todo.isComplete });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Something went wrong." });
+  }
+});
 
 app.listen(3000, () => {
   console.log("Server running on port 3000");
