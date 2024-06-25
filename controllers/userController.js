@@ -1,5 +1,6 @@
 const User = require("../models/UserSchema");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 async function createUser(req, res) {
   try {
@@ -31,7 +32,12 @@ async function loginUser(req, res) {
     const result = await bcrypt.compare(userData.password, user.password);
 
     if (result) {
-      res.status(200).json({ message: "User Logged In Successfully." });
+      const token = jwt.sign({ userId: user._id }, "secretkey", {
+        expiresIn: "1h",
+      });
+      res
+        .status(200)
+        .json({ message: "User Logged In Successfully.", toke: token });
       return;
     }
   } catch (error) {
