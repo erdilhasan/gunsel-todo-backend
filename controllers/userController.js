@@ -1,8 +1,19 @@
 const User = require("../models/UserSchema");
+const bcrypt = require("bcrypt");
+
 async function createUser(req, res) {
   try {
     const userData = req.body;
-    console.log(userData);
+
+    if (userData.password.length < 6) {
+      res
+        .status(400)
+        .json({ message: "Password must be 6 characters long at minimum." });
+      return;
+    }
+
+    userData.password = await bcrypt.hash(userData.password, 10);
+
     const user = User(userData);
     await user.save();
     res.status(200).json({ message: "User Created Successfully." });
@@ -12,4 +23,22 @@ async function createUser(req, res) {
   }
 }
 
-module.exports = { createUser };
+async function loginUser(req, res) {
+  try {
+    const userData = req.body;
+
+    const user = await User.findOne({ username: userData.username });
+    const result = await bcrypt.compare(userData.password, user.password);
+
+    if (result) {
+      res.status(200).json({ message: "User Logged In Successfully." });
+      return;
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Something went wrong." });
+  }
+  res.status(400).json({});
+}
+
+module.exports = { createUser, loginUser };
