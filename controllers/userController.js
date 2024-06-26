@@ -28,16 +28,18 @@ async function loginUser(req, res) {
   try {
     const userData = req.body;
 
-    const user = await User.findOne({ username: userData.username });
+    const user = await User.findOne({ email: userData.email });
     const result = await bcrypt.compare(userData.password, user.password);
 
     if (result) {
       const token = jwt.sign({ userId: user._id }, "secretkey", {
         expiresIn: "1h",
       });
-      res
-        .status(200)
-        .json({ message: "User Logged In Successfully.", toke: token });
+      res.status(200).json({
+        message: "User Logged In Successfully.",
+        user: user,
+        token: token,
+      });
       return;
     }
   } catch (error) {

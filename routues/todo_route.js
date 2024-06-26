@@ -13,6 +13,6 @@ router.get(
   todoController.getUserTasks
 );
 router.post("/toggleTaskComplete", todoController.toggleTaskComplete);
-router.post("/create", todoController.createTodo);
+router.post("/create", verifyToken, todoController.createTodo);
 
 module.exports = router;

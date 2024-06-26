@@ -5,10 +5,11 @@ const createTodo = async (req, res) => {
   try {
     const todoData = req.body;
     console.log(todoData);
+    todoData.userId = req.userId;
     const todo = Todo(todoData);
     await todo.save();
 
-    const user = await User.findById(todo.userId);
+    const user = await User.findById(req.userId);
     user.todos.push(todo);
     user.save();
 
@@ -43,10 +44,10 @@ const getOneTask = async (req, res) => {
   res.send(todo);
 };
 const getUserTasks = async (req, res) => {
-  const userId = req.query.userId;
+  const userId = req.userId;
   console.log(userId);
   const user = await User.findById(userId).populate("todos");
-  //Find from Todo collection or from the user's todos field?
+  console.log(user);
 
   res.send(user.todos);
 };
