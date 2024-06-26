@@ -14,5 +14,6 @@ router.get(
 );
 router.post("/toggleTaskComplete", todoController.toggleTaskComplete);
 router.post("/create", verifyToken, todoController.createTodo);
+router.post("/delete", todoController.deleteTask);
 
 module.exports = router;

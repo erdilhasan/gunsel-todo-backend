@@ -32,6 +32,19 @@ const toggleTaskComplete = async (req, res) => {
     res.status(400).json({ message: "Something went wrong." });
   }
 };
+const deleteTask = async (req, res) => {
+  try {
+    const todoId = req.query.todoId;
+    const todo = await Todo.findByIdAndDelete(todoId);
+
+    await todo.deleteOne();
+
+    res.status(200).json({});
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Something went wrong." });
+  }
+};
 
 const getAllTasks = async (req, res) => {
   const allTodos = await Todo.find();
@@ -58,4 +71,5 @@ module.exports = {
   getAllTasks,
   getOneTask,
   getUserTasks,
+  deleteTask,
 };
