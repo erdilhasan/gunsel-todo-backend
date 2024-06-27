@@ -1,6 +1,6 @@
-const User = require("../models/UserSchema");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+import User from "../models/UserSchema.js";
+import { hash, compare } from "bcrypt";
+import jwt from "jsonwebtoken";
 
 async function createUser(req, res) {
   try {
@@ -13,7 +13,7 @@ async function createUser(req, res) {
       return;
     }
 
-    userData.password = await bcrypt.hash(userData.password, 10);
+    userData.password = await hash(userData.password, 10);
 
     const user = User(userData);
     await user.save();
@@ -29,17 +29,27 @@ async function loginUser(req, res) {
     const userData = req.body;
 
     const user = await User.findOne({ email: userData.email });
-    const result = await bcrypt.compare(userData.password, user.password);
+    const result = await compare(userData.password, user.password);
 
     if (result) {
       const token = jwt.sign({ userId: user._id }, "secretkey", {
         expiresIn: "1h",
       });
+      console.log("token:" + token);
+
+      const refreshToken = jwt.sign({ userId: user._id }, "secretkey", {
+        expiresIn: "7 days",
+      });
+
       res.status(200).json({
         message: "User Logged In Successfully.",
         user: user,
         token: token,
+        refreshToken: refreshToken,
       });
+
+      user.refreshToken = await hash(refreshToken, 10);
+      await user.save();
       return;
     }
   } catch (error) {
@@ -49,4 +59,4 @@ async function loginUser(req, res) {
   res.status(400).json({});
 }
 
-module.exports = { createUser, loginUser };
+export { createUser, loginUser };

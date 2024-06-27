@@ -1,8 +1,7 @@
-const mongoose = require("mongoose");
+import { connect } from "mongoose";
 const mondoDbURL = "mongodb://127.0.0.1/gunsel_todo";
 function mongooseConnection() {
-  mongoose
-    .connect(mondoDbURL)
+  connect(mondoDbURL)
     .then(() => {
       console.log("Connected to MongoDB");
     })
@@ -12,4 +11,4 @@ function mongooseConnection() {
     });
 }
 
-module.exports = mongooseConnection;
+export default mongooseConnection;

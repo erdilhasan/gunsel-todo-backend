@@ -1,10 +1,10 @@
-const express = require("express");
-const http = require("http");
-const cors = require("cors");
-var bodyParser = require("body-parser");
-const mongooseConnection = require("./utils/mongoose_connection");
-const todoRouter = require("./routues/todo_route");
-const userRouter = require("./routues/user_route");
+import express from "express";
+import http from "http";
+import cors from "cors";
+import bodyParser from "body-parser";
+import mongooseConnection from "./utils/mongoose_connection.js";
+import todoRouter from "./routues/todo_route.js";
+import userRouter from "./routues/user_route.js";
 const app = express();
 
 mongooseConnection();

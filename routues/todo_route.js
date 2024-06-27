@@ -1,19 +1,22 @@
-const express = require("express");
+import { Router } from "express";
 
-const router = express.Router();
+const router = Router();
 
-const todoController = require("../controllers/todoController");
-const verifyToken = require("../middleware/authMiddleware");
+import {
+  createTodo,
+  toggleTaskComplete,
+  getAllTasks,
+  getOneTask,
+  getUserTasks,
+  deleteTask,
+} from "../controllers/todoController.js";
+import { verifyToken } from "../middleware/authMiddleware.js";
 
-router.get("/getAllTodoTasks", todoController.getAllTasks);
-router.get("/getTodoTask", todoController.getOneTask);
-router.get(
-  "/getIndividualUserTodoTasks",
-  verifyToken,
-  todoController.getUserTasks
-);
-router.post("/toggleTaskComplete", todoController.toggleTaskComplete);
-router.post("/create", verifyToken, todoController.createTodo);
-router.post("/delete", todoController.deleteTask);
+router.get("/getAllTodoTasks", getAllTasks);
+router.get("/getTodoTask", getOneTask);
+router.get("/getIndividualUserTodoTasks", verifyToken, getUserTasks);
+router.post("/toggleTaskComplete", toggleTaskComplete);
+router.post("/create", verifyToken, createTodo);
+router.post("/delete", deleteTask);
 
-module.exports = router;
+export default router;

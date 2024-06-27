@@ -1,5 +1,5 @@
-const Todo = require("../models/TodoSchema");
-const User = require("../models/UserSchema");
+import Todo from "../models/TodoSchema.js";
+import User from "../models/UserSchema.js";
 
 const createTodo = async (req, res) => {
   try {
@@ -65,7 +65,7 @@ const getUserTasks = async (req, res) => {
   res.send(user.todos);
 };
 
-module.exports = {
+export {
   createTodo,
   toggleTaskComplete,
   getAllTasks,

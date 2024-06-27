@@ -1,11 +1,11 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
 var emailRegex = function (email) {
   var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   return re.test(email);
 };
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new Schema({
   username: { type: String, required: true, unique: true },
   email: {
     type: String,
@@ -18,7 +18,8 @@ const UserSchema = new mongoose.Schema({
     ],
   },
   password: { type: String, required: true }, //hashed
-  todos: [{ type: mongoose.Schema.Types.ObjectId, ref: "Todo" }], // ManyToOne
+  refreshToken: { type: Schema.Types.String },
+  todos: [{ type: Schema.Types.ObjectId, ref: "Todo" }], // ManyToOne
 });
 
-module.exports = mongoose.model("User", UserSchema);
+export default model("User", UserSchema);
