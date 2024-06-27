@@ -33,7 +33,7 @@ async function loginUser(req, res) {
 
     if (result) {
       const token = jwt.sign({ userId: user._id }, "secretkey", {
-        expiresIn: "1h",
+        expiresIn: 10,
       });
       console.log("token:" + token);
 
@@ -48,7 +48,7 @@ async function loginUser(req, res) {
         refreshToken: refreshToken,
       });
 
-      user.refreshToken = await hash(refreshToken, 10);
+      user.refreshToken = refreshToken; // await hash(refreshToken, 10);
       await user.save();
       return;
     }
@@ -58,5 +58,29 @@ async function loginUser(req, res) {
   }
   res.status(400).json({});
 }
+async function refreshAccessToken(req, res) {
+  try {
+    console.log("verifyng");
+    const userId = req.userId;
 
-export { createUser, loginUser };
+    const user = await User.findById(userId);
+
+    const token = jwt.sign({ userId: user._id }, "secretkey", {
+      expiresIn: 10,
+    });
+
+    res.status(200).json({
+      message: "Token Refreshed",
+      user: user,
+      token: token,
+    });
+
+    return;
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Something went wrong." });
+  }
+  res.status(400).json({});
+}
+
+export { createUser, loginUser, refreshAccessToken };
