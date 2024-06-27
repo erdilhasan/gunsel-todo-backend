@@ -38,7 +38,7 @@ async function loginUser(req, res) {
       console.log("token:" + token);
 
       const refreshToken = jwt.sign({ userId: user._id }, "secretkey", {
-        expiresIn: "7 days",
+        expiresIn: 30,
       });
 
       res.status(200).json({
